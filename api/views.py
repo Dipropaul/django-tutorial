@@ -14,6 +14,8 @@ from teacher.models import Teacher
 from blogs.models import Blog, Comment
 from blogs.serializers import BlogSerializer, CommentSerializer
 from django.shortcuts import get_object_or_404, render
+from .pagination import CustomPagination
+from django_filters.rest_framework import DjangoFilterBackend
 # Create your views here.
 
 
@@ -142,6 +144,7 @@ class StaffDetailView(mixins.RetrieveModelMixin,
 class DoctorList(generics.ListCreateAPIView):
     queryset = Doctor.objects.all()
     serializer_class = DoctorSerializer
+   
     
 class DoctorDetailView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Doctor.objects.all()
@@ -154,8 +157,9 @@ class DoctorDetailView(generics.RetrieveUpdateDestroyAPIView):
 class TeacherViewSet(viewsets.ModelViewSet):
     queryset = Teacher.objects.all()
     serializer_class = TeacherSerializer
-    
-    
+    pagination_class = CustomPagination
+    filter_backends = [DjangoFilterBackend]
+    filterset_fields = ['subject', 'name']
 # Blog and Comment Views nested serilizers and views
 class BlogList(generics.ListCreateAPIView):
     queryset = Blog.objects.all()
@@ -164,3 +168,13 @@ class BlogList(generics.ListCreateAPIView):
 class CommentList(generics.ListCreateAPIView):
     queryset = Comment.objects.all()
     serializer_class = CommentSerializer
+    
+    
+class BlogDetail(generics.RetrieveUpdateDestroyAPIView):
+    queryset = Blog.objects.all()
+    serializer_class = BlogSerializer
+    lookup_field = 'pk'
+class CommentDetail(generics.RetrieveUpdateDestroyAPIView):
+    queryset = Comment.objects.all()
+    serializer_class = CommentSerializer
+    lookup_field = 'pk'
